@@ -1,6 +1,6 @@
 <?php
 set_time_limit(0);
-
+require_once 'init.php';
 require_once 'Log.php';
 
 $conf = array('mode' => 0644);

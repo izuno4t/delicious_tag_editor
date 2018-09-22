@@ -1,6 +1,10 @@
 <?php
+require_once 'init.php';
+require_once 'delicious.php';
 
-$tags = getTags();
+$delicious = new Delicious($_SESSION['name'], $_SESSION['password']);
+
+$tags = $delicious->getTags();
 if(false !== $tags){
 	$counts = array_values($tags);
 	if(is_array($counts)){
@@ -17,12 +21,13 @@ if(false !== $tags){
 <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
 <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.4.0/build/reset/reset-min.css">
 <link rel="stylesheet" type="text/css" href="styles.css">
-<title>del.icio.us - noworks</title>
+<title>del.icio.us - <?=$_SESSION['name']?></title>
 <script type="text/javascript" src="jquery-1.2.1.js"></script>
 <script type="text/javascript">
 function renametag(obj){
 	var form = $(obj).parent();
-	$(obj).val('sending...');
+	$(obj).val("sending...");
+	$("input[@name=cancel]", form).hide();
 	$.ajax({
 		type: "GET",
 		url: "rename.php",
@@ -38,6 +43,7 @@ function renametag(obj){
 			}else{
 				target.text(newtag);
 				removeform(obj);
+				showmessage(msg);
 			}
 		},
 		error:function(msg){
@@ -64,10 +70,17 @@ function removeform(obj){
 	return false;
 }
 function addform(obj){
-	obj.css('display', 'none');
-	$html = '<form onsubmit="renametag(this.submit);return false;"><input type="hidden" name="old" value="' + obj.html() + '"><input tyle="text" name="new" value="' + obj.html() + '" /><input type="button" name="submit" value="submit" onclick="renametag(this);return false;"/><input type="button" value="cancel" onclick="removeform(this);return false;"/></form>';
-	$html += obj.parent().html();
-	obj.parent().html($html);
+	$(obj).css('display', 'none');
+	var tag = $(obj).html();
+	var parent = $(obj).parent();
+	$html = '<form onsubmit="renametag(this.submit);return false;"><input type="hidden" name="old" value="' + tag + '"><input tyle="text" name="new" value="' + tag + '" /><input type="button" name="submit" value="submit" onclick="renametag(this);return false;"/><input type="button" name="cancel" value="cancel" onclick="removeform(this);return false;"/></form>';
+	$html += parent.html();
+	parent.html($html);
+	
+	var txt = $("input[@name=new]", parent);
+	txt.focus();
+	txt.select();
+	
 	return false;
 }
 
@@ -83,22 +96,29 @@ function tag_duplicated(val){
 	return exists;
 }
 
+function showmessage(msg){
+	$("#message").html(msg);
+	$("#message:hidden").slideDown("slow");
+}
 
 $(function(){
     $('span.tagname').hover(function(){togglebg($(this),true)}, function(){togglebg($(this), false)});
-    $('span.tagname').click(function(){addform($(this))});	
+    $('span.tagname').click(function(){addform(this)});	
 });
+
+
 </script>
 </head>
 <body>
 <div id="containar">
 	<ul id="navigation">
+		<li><a href="taglist.php">tag list</a></li>
 		<li><a href="tagcloud.php">tag cloud</a></li>
-		<li><a href="renametolower.php">replace upper to lower</a></li>
+		<li><a href="logout.php">logout</a></li>
 	</ul>
-
 	<h1>Your Tags</h1>
 	<div id="result">
+	<div id="message" style="display:none"></div>
 	<?if(is_array($tags)){?>
 		<ul>
 		<?foreach ($tags as $k => $v) {?>
@@ -110,22 +130,3 @@ $(function(){
 </div>
 </body>
 </html>
-
-<?
-function getTags(){
-	$url = 'https://noworks:bridget@api.del.icio.us/v1/tags/get';
-	$fp = fopen($url, 'r');
-	if(false === $fp){
-		return false;
-	}
-	
-	$body = stream_get_contents($fp);
-	$xml = new SimpleXMLElement($body); 
-
-	$tags = array();
-	foreach ($xml->tag as $tag) {
-		$tags[(string)$tag['tag']] = (string)$tag['count'];
-	}
-	return $tags;
-}
-?>
