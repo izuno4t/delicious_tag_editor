@@ -1,0 +1,89 @@
+*{
+	color: #333;
+}
+
+#containar{
+	margin: 20px;	
+}
+#containar h1{
+	font-size: 2em;
+	color: #666;
+	margin-left: 20px;
+	border-bottom: 2px dotted #80A92B;
+}
+
+ul#navigation{
+	margin: 10px 20px; 
+}
+ul#navigation li{
+	display: inline; 
+}
+
+table#tagtable{
+	margin: 20px;
+	border-collapse: none;
+}
+table#tagtable th,table#tagtable td{
+	padding: 5px;
+	border: 1px solid #999;
+}
+table#tagtable th{
+	background: #80A92B;
+	color: #fff;
+}
+table#tagtable td.name{
+}
+table#tagtable td.count{
+	text-align: right;
+}
+
+div#result{
+	margin: 20px 0 0 30px;	
+}
+div#result p{
+	line-height: 2em;
+}
+div#result ul{
+}
+div#result li{
+	margin: 1px solid #80A92B;
+	padding: 5px;
+	font-size: 1.5em;
+	line-height: 2em;
+	display: inline;
+}
+div#result li span.tagname{
+	padding: 5px;
+}
+
+div#result li form{
+	display: inline;
+}
+div#result li input[type=text]{
+	font-size: 0.9em;
+	background: #ffffd3;
+	padding: 2px;
+	width:150px;
+}
+div#result li input[type=submit],div#result li input[type=button]{
+	color: #fff;
+	font-weight: bold;
+	background: #f00;
+	border: 1px solid #fff;
+	font-size: 0.9em;
+	padding: 0;
+	margin: 0;
+}
+
+div#result a:link span.tagname, div#result a:visited span.tagname, div#result a:active span.tagname{
+	text-decoration: none;
+	border: none;
+}
+div#result a:hover span.tagname{
+	text-decoration: none;
+	border: none;
+}
+
+
+
+
